@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplikasi Queue Penumpang Bus</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script src="controller/Queue.js"></script>
+<script src="controller/Sorting.js"></script>
+
+<h2>Aplikasi ADT Queue Penumpang Bus <br>Naufal Dzaky || 25SA11A189</h2>
+<h3>Tambah Penumpang</h3>
+<input type="text" id="nama" placeholder="Nama">
+<input type="number" id="umur" placeholder="Umur">
+<input type="number" id="jarak" placeholder="Jarak Tujuan (km)">
+<br>
+<button onclick="tambahPenumpang()">Enqueue</button>
+<button onclick="hapusPenumpang()">Dequeue</button>
+
+<h3>Sorting</h3>
+<button onclick="sortNama()">Sorting abjad nama (Insertion)</button>
+<button onclick="sortUmur()">Sorting umur tertua (Selection)</button>
+<button onclick="sortJarak()">Sorting jarak terdekat (Bubble)</button>
+
+<h3>Data Penumpang</h3>
+<table>
+    <thead>
+        <tr>
+            <th>No</th>
+            <th id="kolom_nama">Nama</th>
+            <th id="kolom_umur">Umur</th>
+            <th id="kolom_jarak">Jarak (km)</th>
+        </tr>
+    </thead>
+    <tbody id="tabelData"></tbody>
+</table>
+
+<!-- DOM -->
+<script>
+const queue = new QueuePenumpang(10);
+function tambahPenumpang() {
+    const nama = document.getElementById("nama").value;
+    const umur = parseInt(document.getElementById("umur").value);
+    const jarak = parseInt(document.getElementById("jarak").value);
+    if (!nama || isNaN(umur) || isNaN(jarak)) {
+        alert("Data tidak lengkap");
+        return;
+    }
+    if (queue.enqueue(nama, umur, jarak)) {
+        renderTable();
+        resetInput();
+    }
+}
+function hapusPenumpang() {
+    if (!queue.dequeue()) {
+        alert("Queue kosong");
+    }
+    renderTable();
+}
+async function sortNama() {
+    await insertionSortNama(queue);
+}
+async function sortUmur() {
+    await selectionSortUmur(queue);
+}
+async function sortJarak() {
+    await bubbleSortJarak(queue);
+}
+function renderTable(highlight = [], type = "active") {
+    const tbody = document.getElementById("tabelData");
+    tbody.innerHTML = "";
+    queue.getAll().forEach((p, index) => {
+        let cls = highlight.includes(index) ? type : "";
+        tbody.innerHTML += `
+            <tr class="${cls}">
+                <td>${index + 1}</td>
+                <td>${p.nama}</td>
+                <td>${p.umur}</td>
+                <td>${p.jarak}</td>
+            </tr>
+        `;
+    });
+}
+function resetInput() {
+    document.getElementById("nama").value = "";
+    document.getElementById("umur").value = "";
+    document.getElementById("jarak").value = "";
+}
+</script>
+
+
+</body>
+</html>
